@@ -43,6 +43,8 @@ const updateUserInfo = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.kind === 'ObjectId') {
         next(new BadRequestError('Переданы некорректные данные'));
+      } else if (err.name === 'MongoError' || err.code === '11000') {
+        next(new ConflictError('Можно вносить изменения только со своего email'));
       } else {
         next(err);
       }

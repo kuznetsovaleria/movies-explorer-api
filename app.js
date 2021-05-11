@@ -6,20 +6,15 @@ const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const limiter = require('./config/rate-limiter');
-const { validateCreateUser, validateLogin } = require('./middlewares/validations');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { createUser, login } = require('./controllers/users');
-const auth = require('./middlewares/auth');
-const usersRouter = require('./routes/users');
-const moviesRouter = require('./routes/movies');
+const router = require('./routes/index');
 const errorHandler = require('./middlewares/error-handler');
 
 const { PORT = 3000 } = process.env;
 const app = express();
+const mongoDB = require('./config/mongo');
 
-const NotFoundError = require('./errors/not-found-error');
-
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+mongoose.connect(mongoDB, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -43,16 +38,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signup', validateCreateUser, createUser);
-app.post('/signin', validateLogin, login);
-
-app.use(auth);
-
-app.use(usersRouter);
-app.use(moviesRouter);
-app.use((req, res, next) => {
-  next(new NotFoundError('Страница не найдена'));
-});
+app.use(router);
 
 app.use(errorLogger);
 

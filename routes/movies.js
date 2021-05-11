@@ -5,10 +5,14 @@ const {
 } = require('../controllers/movies');
 
 const {
-  validateGetSavedMovies, validateCreateMovie, validateDeleteMovie,
+  validateCreateMovie, validateDeleteMovie,
 } = require('../middlewares/validations');
 
-router.get('/movies', validateGetSavedMovies, getSavedMovies);
+const auth = require('../middlewares/auth');
+
+router.use(auth);
+
+router.get('/movies', getSavedMovies);
 router.post('/movies', validateCreateMovie, createMovie);
 router.delete('/movies/:movieId', validateDeleteMovie, deleteMovie);
 

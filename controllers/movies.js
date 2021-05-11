@@ -27,8 +27,8 @@ const createMovie = (req, res, next) => {
     description,
     image,
     trailer,
-    nameRu,
-    nameEn,
+    nameRU,
+    nameEN,
     thumbnail,
     movieId,
   } = req.body;
@@ -41,16 +41,13 @@ const createMovie = (req, res, next) => {
     description,
     image,
     trailer,
-    nameRu,
-    nameEn,
+    nameRU,
+    nameEN,
     thumbnail,
     movieId,
     owner,
   })
     .then((movie) => {
-      if (!movie) {
-        throw new BadRequestError('Ошибка запроса');
-      }
       res.status(201).send(movie);
     })
     .catch((err) => {
@@ -71,7 +68,7 @@ const deleteMovie = (req, res, next) => {
         throw new NotFoundError('Фильм не найден');
       }
       if (movie.owner.equals(req.user._id)) {
-        Movie.findByIdAndRemove(movieId)
+        movie.remove()
           .then(() => {
             res.status(200).send({ message: 'Фильм удалён из сохранённых' });
           })
@@ -80,6 +77,20 @@ const deleteMovie = (req, res, next) => {
         next(new ForbiddenError('Можно удалять только свои сохранённые фильмы'));
       }
     })
+    // .then((movie) => {
+    //   if (!movie) {
+    //     throw new NotFoundError('Фильм не найден');
+    //   }
+    //   if (movie.owner.equals(req.user._id)) {
+    //     Movie.findByIdAndRemove(movieId)
+    //       .then(() => {
+    //         res.status(200).send({ message: 'Фильм удалён из сохранённых' });
+    //       })
+    //       .catch(next);
+    //   } else {
+    //     next(new ForbiddenError('Можно удалять только свои сохранённые фильмы'));
+    //   }
+    // })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
         next(new BadRequestError('Невалидный id фильма'));

@@ -4,7 +4,7 @@ const validator = require('validator');
 
 const validateCreateUser = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required()
+    email: Joi.string().required().email()
       .messages({
         'any.required': 'Поле email должно быть заполнено',
       }),
@@ -24,7 +24,7 @@ const validateCreateUser = celebrate({
 
 const validateLogin = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required()
+    email: Joi.string().required().email()
       .messages({
         'any.required': 'Поле email должно быть заполнено',
       }),
@@ -36,20 +36,13 @@ const validateLogin = celebrate({
   }),
 });
 
-const validateGetCurrentUser = celebrate({
-  headers: Joi.object().keys({
-    authorization: Joi.string().min(2).max(200),
-  }).unknown(true),
-});
-
 const validateUpdateUserInfo = celebrate({
   body: Joi.object().keys({
-    email: Joi.string(),
-    name: Joi.string(),
+    email: Joi.string().required().email(),
+    name: Joi.string().required().min(2).max(30),
   }),
   headers: Joi.object().keys({
     'content-type': Joi.string().valid('application/json').required(),
-    authorization: Joi.string().required().min(2).max(200),
   }).unknown(true),
 });
 
@@ -78,19 +71,10 @@ const validateCreateMovie = celebrate({
       }
       return helpers.message('Поле thumbnail должно быть валидным url-адресом');
     }),
-    movieId: Joi.string().required(),
-    nameRu: Joi.string().required().pattern(/^[а-яА-ЯЁё0-9\s]+$/),
-    nameEn: Joi.string().required().pattern(/^[a-zA-Z0-9\s]+$/),
+    movieId: Joi.number().required(),
+    nameRU: Joi.string().required().pattern(/^[а-яА-ЯЁё0-9\s]+$/),
+    nameEN: Joi.string().required().pattern(/^[a-zA-Z0-9\s]+$/),
   }),
-  headers: Joi.object().keys({
-    authorization: Joi.string().required().min(2).max(200),
-  }).unknown(true),
-});
-
-const validateGetSavedMovies = celebrate({
-  headers: Joi.object().keys({
-    authorization: Joi.string().min(2).max(200),
-  }).unknown(true),
 });
 
 const validateDeleteMovie = celebrate({
@@ -102,17 +86,12 @@ const validateDeleteMovie = celebrate({
       return helpers.message('Невалидный id фильма');
     }),
   }),
-  headers: Joi.object().keys({
-    authorization: Joi.string().required().min(2).max(200),
-  }).unknown(true),
 });
 
 module.exports = {
   validateCreateUser,
   validateLogin,
-  validateGetCurrentUser,
   validateUpdateUserInfo,
   validateCreateMovie,
-  validateGetSavedMovies,
   validateDeleteMovie,
 };
