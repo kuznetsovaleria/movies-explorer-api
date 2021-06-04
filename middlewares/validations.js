@@ -79,7 +79,7 @@ const validateCreateMovie = celebrate({
 
 const validateDeleteMovie = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.string().required().custom((value, helpers) => {
+    movieId: Joi.number().required().custom((value, helpers) => {
       if (ObjectId.isValid(value)) {
         return value;
       }
