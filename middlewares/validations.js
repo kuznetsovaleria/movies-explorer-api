@@ -72,8 +72,8 @@ const validateCreateMovie = celebrate({
       return helpers.message('Поле thumbnail должно быть валидным url-адресом');
     }),
     movieId: Joi.number().required(),
-    nameRU: Joi.string().required().pattern(/^[а-яА-ЯЁё0-9\s]+$/),
-    nameEN: Joi.string().required().pattern(/^[a-zA-Z0-9\s]+$/),
+    nameRU: Joi.string().required(),
+    nameEN: Joi.string().required(),
   }),
 });
 
